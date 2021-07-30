@@ -6,6 +6,8 @@ import picNagel from './nagel.png';
 import Barcode from 'react-barcode';
 import {BrowserRouter as Router, Route, useLocation, useRouteMatch} from 'react-router-dom';
 import queryString from 'query-string';
+import * as d3 from 'd3';
+import pdata from './products.csv'
 
 import fonts from './font.css';
 
@@ -27,7 +29,9 @@ class Item {
     this.name = name;
     this.price = price;
     this.image = image;
-    this.offerPrice = offerPrice;
+    if(offerPrice < price){
+      this.offerPrice = offerPrice;
+    }
     this.inStock = inStock;
     this.description = description;
   }
@@ -75,10 +79,10 @@ const OfferCard = (props) => {
           <TableBody>
             <TableRow>
               <TableCell scope="row">
-                Sie sparen:
+              <s>{props.offerItem.price.toFixed(2)} €</s>
               </TableCell>
               <TableCell>
-                <span style={{color: '#FF0000'}}>{(1 - props.offerItem.offerPrice/props.offerItem.price).toFixed(2) * 100}%</span>
+                <span style={{color: '#FF0000'}}>{(props.offerItem.price * 0.8).toFixed(2)} €</span>
               </TableCell>
             </TableRow>
           </TableBody>
@@ -109,7 +113,7 @@ const OfferTable = (props) => {
         Früher:
       </TableCell>
       <TableCell>
-        <span><s>{props.item.price.toFixed(2)}€</s></span>
+        <span><s>{props.item.price.toFixed(2)} €</s></span>
       </TableCell>
     </TableRow>
     <TableRow>
@@ -117,7 +121,7 @@ const OfferTable = (props) => {
         Unser Preis:
       </TableCell>
       <TableCell>
-        <span style={{color: '#FF0000'}}>{props.item.offerPrice.toFixed(2)}€</span>
+        <span style={{color: '#FF0000'}}>{props.item.offerPrice.toFixed(2)} €</span>
       </TableCell>
     </TableRow><TableRow>
       <TableCell scope="row">
@@ -137,7 +141,7 @@ const NoOfferTable = (props) => {
           Preis:
         </TableCell>
         <TableCell>
-          <span>{props.item.price.toFixed(2)}€</span>
+          <span>{props.item.price.toFixed(2)} €</span>
         </TableCell>
       </TableRow>
     </TableBody>
@@ -148,28 +152,41 @@ const NoOfferTable = (props) => {
 function App() {
   const [showSidebar, setShowSidebar] = useState(false);
 
-  const [barcodes, setBarcodes] = useState(['Nagel 20%']);
+  const [barcodes, setBarcodes] = useState(['Nagel 20 %']);
 
-  const [mainItem, setMainItem] = useState(new Item('Hammer Hammer', 50, 40, picHammer, true, ['Robuster Kopf aus geschmiedeter Stahllegierung', 'Leichter Holzstiel mit vibrationsdämpfendem Design, FSC-zertifiziert']));
+  const [products, setProducts] = useState([{product_id: 0, product_name: 'test', product_price: 1, product_season: '', product_description: '', product_image: 'hammer.jpg'}]);
+
+  const [mainItem, setMainItem] = useState(new Item(products[0].product_name, products[0].product_price, products[0].product_price, "./images/"+products[0].product_image, true, [products[0].product_description]));
   const [spotlightItems, setSpotlightItems] = useState([
-    new Item('Nagel', 1, 0.7, picNagel, true, '10/10 Nagel'), 
-    new Item('Nagel', 1, 0.7, picNagel, true, '10/10 Nagel'), 
-    new Item('Nagel', 1, 0.7, picNagel, true, '10/10 Nagel')
+    new Item(products[0].product_name, products[0].product_price, products[0].product_price, "./images/"+products[0].product_image, true, [products[0].product_description]), 
+    new Item(products[0].product_name, products[0].product_price, products[0].product_price, "./images/"+products[0].product_image, true, [products[0].product_description]), 
+    new Item(products[0].product_name, products[0].product_price, products[0].product_price, "./images/"+products[0].product_image, true, [products[0].product_description])
   ]);
 
   const addCoupon = (item) => {
     let newBarcodes = barcodes;
-    let stringToAdd = `${item.name} ${(1-item.offerPrice/item.price).toFixed(2) * 100}%`
+    let stringToAdd = `${item.name} 20 %`
     if (!newBarcodes.includes(stringToAdd)) {
       newBarcodes.push(stringToAdd);
     }
     setBarcodes([...newBarcodes]);
   }
-  
+
   const { search } = useLocation();
-  const values = queryString.parse(search)
+  const values = queryString.parse(search);
+  values.id = parseInt(values.id);
 
   useEffect(() => {
+    d3.csv(pdata, function(data) {
+      setProducts(data);
+      console.log("text " + products[0]);
+      console.log(products.length);
+      if(products.length > values.id-1){
+        setMainItem(new Item(products[values.id-1].product_name, parseFloat(products[values.id-1].product_price), parseFloat(products[values.id-1].product_price), "./images/"+products[values.id-1].product_image, true, [products[values.id-1].product_description]));
+      }
+      
+    });
+
     fetch({
       url: `https://ezmeral52gateway1.demo.local:10065/availability?productId=${values.id}`,
       method: 'GET',
@@ -177,12 +194,26 @@ function App() {
         
       }
     })
-      // .then((res) => res.json())
-      .then((res) => console.log(res))
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [values.id]);
+    // .then((res) => res.json())
+    .then((res) => console.log(res))
+    .catch((err) => {
+      console.log(err);
+    });
+
+    /*fetch({
+      url: `https://ezmeral52gateway1.demo.local:10065/recommendation?productId=${values.id}`,
+      method: 'GET',
+      headers: {}
+    })
+    .then((res) => res.json())
+    .then((res) => {
+      console.log(res.body.recommendations);
+      setSpotlightItems([new Item(products[res.body.recommendations[0]-1].product_name, parseFloat(products[res.body.recommendations[0]-1].product_price), parseFloat(products[res.body.recommendations[0]-1].product_price), "./images/"+products[res.body.recommendations[0]-1].product_image, true, [products[res.body.recommendations[0]-1].product_description]), 
+                         new Item(products[res.body.recommendations[1]-1].product_name, parseFloat(products[res.body.recommendations[1]-1].product_price), parseFloat(products[res.body.recommendations[1]-1].product_price), "./images/"+products[res.body.recommendations[0]-1].product_image, true, [products[res.body.recommendations[1]-1].product_description]),
+                         new Item(products[res.body.recommendations[2]-1].product_name, parseFloat(products[res.body.recommendations[2]-1].product_price), parseFloat(products[res.body.recommendations[2]-1].product_price), "./images/"+products[res.body.recommendations[0]-1].product_image, true, [products[res.body.recommendations[2]-1].product_description])]);
+    });*/
+
+  }, [values.id, products.length]);
 
   return (
       <Grommet theme={theme} themeMode='dark'>
@@ -227,9 +258,10 @@ function App() {
                           <NoOfferTable item={mainItem}/>
                         }
                       </Table>
-                      <ul>
+                      {/*<ul>
                         {mainItem.description.map((desc) => <li><Text size='18px'>{desc}</Text></li>)}
-                      </ul>
+                      </ul>*/}
+                      <p>{mainItem.description}</p>
                       <Box flex style={{justifyContent:'flex-end'}}>
                           {mainItem.inStock? 
                           <Button primary alignSelf='end' fill='horizontal' label="Online"/>:(
