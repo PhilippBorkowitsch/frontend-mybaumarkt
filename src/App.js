@@ -7,6 +7,7 @@ import {BrowserRouter as Router, Route, useLocation, useRouteMatch} from 'react-
 import queryString from 'query-string';
 import * as d3 from 'd3';
 import pdata from './products.csv'
+import picHammer from './images/hammer2.png'
 
 import fonts from './font.css';
 
@@ -153,9 +154,8 @@ function App() {
 
   const [barcodes, setBarcodes] = useState(['Nagel 20 %']);
 
-  const [products, setProducts] = useState([{product_id: 0, product_name: 'test', product_price: 1, product_season: '', product_description: '', product_image: 'hammer.jpeg'}]);
+  const [products, setProducts] = useState([{product_id: 0, product_name: 'test', product_price: 1, product_season: '', product_description: '', product_image: 'hammer2.png'}]);
 
-  console.log("./images/"+products[0].product_image);
   const [mainItem, setMainItem] = useState(new Item(products[0].product_name, products[0].product_price, products[0].product_price, "./images/"+products[0].product_image, true, [products[0].product_description]));
   const [spotlightItems, setSpotlightItems] = useState([
     new Item(products[0].product_name, products[0].product_price, products[0].product_price, "./images/"+products[0].product_image, true, [products[0].product_description]), 
