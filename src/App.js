@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Button, Card, Heading, Grommet, Grid, Image, Table, Text, Layer, ResponsiveContext, TableBody, TableRow, TableCell, Stack, CardHeader, CardBody, CardFooter } from 'grommet';
 import { FormClose, Notification } from 'grommet-icons';
-import picHammer from './hammer.jpg';
 import picNagel from './nagel.png';
 import Barcode from 'react-barcode';
 import {BrowserRouter as Router, Route, useLocation, useRouteMatch} from 'react-router-dom';
@@ -154,8 +153,9 @@ function App() {
 
   const [barcodes, setBarcodes] = useState(['Nagel 20 %']);
 
-  const [products, setProducts] = useState([{product_id: 0, product_name: 'test', product_price: 1, product_season: '', product_description: '', product_image: 'hammer.jpg'}]);
+  const [products, setProducts] = useState([{product_id: 0, product_name: 'test', product_price: 1, product_season: '', product_description: '', product_image: 'hammer.jpeg'}]);
 
+  console.log("./images/"+products[0].product_image);
   const [mainItem, setMainItem] = useState(new Item(products[0].product_name, products[0].product_price, products[0].product_price, "./images/"+products[0].product_image, true, [products[0].product_description]));
   const [spotlightItems, setSpotlightItems] = useState([
     new Item(products[0].product_name, products[0].product_price, products[0].product_price, "./images/"+products[0].product_image, true, [products[0].product_description]), 
