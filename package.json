@@ -9,6 +9,7 @@
     "d3": "^3.5.17",
     "grommet": "^2.17.2",
     "grommet-icons": "^4.5.0",
+    "patch-package": "^6.4.7",
     "query-string": "^7.0.0",
     "react": "^17.0.2",
     "react-barcode": "^1.4.0",
