@@ -172,6 +172,7 @@ function App() {
     setBarcodes([...newBarcodes]);
   }
 
+  
   const { search } = useLocation();
   const values = queryString.parse(search);
   values.id = parseInt(values.id);
