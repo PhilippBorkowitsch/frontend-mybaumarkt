@@ -147,7 +147,6 @@ const NoOfferTable = (props) => {
   )
 }
 
-
 function App() {
   const [showSidebar, setShowSidebar] = useState(false);
 
@@ -171,7 +170,7 @@ function App() {
     setBarcodes([...newBarcodes]);
   }
 
-  
+
   const { search } = useLocation();
   const values = queryString.parse(search);
   values.id = parseInt(values.id);
