@@ -191,9 +191,9 @@ function App() {
     })
     .then((res) => res.json())
     .then((res) => {
-      console.log(res.body);
+      console.log(res);
       var tempItem = mainItem;
-      tempItem.inStock = res.body.available=="false"?false:true;
+      tempItem.inStock = res.available=="false"?false:true;
       setMainItem(tempItem);
     })
     .catch((err) => {
@@ -205,11 +205,11 @@ function App() {
     })
     .then((res) => res.json())
     .then((res) => {
-      console.log(res.body);
+      console.log(res);
 
-      setSpotlightItems([new Item(products[res.body.recommendations[0]-1].product_name, parseFloat(products[res.body.recommendations[0]-1].product_price), parseFloat(products[res.body.recommendations[0]-1].product_price), "/frontend/images/"+products[res.body.recommendations[0]-1].product_image, true, [products[res.body.recommendations[0]-1].product_description]), 
-                         new Item(products[res.body.recommendations[1]-1].product_name, parseFloat(products[res.body.recommendations[1]-1].product_price), parseFloat(products[res.body.recommendations[1]-1].product_price), "/frontend/images/"+products[res.body.recommendations[0]-1].product_image, true, [products[res.body.recommendations[1]-1].product_description]),
-                         new Item(products[res.body.recommendations[2]-1].product_name, parseFloat(products[res.body.recommendations[2]-1].product_price), parseFloat(products[res.body.recommendations[2]-1].product_price), "/frontend/images/"+products[res.body.recommendations[0]-1].product_image, true, [products[res.body.recommendations[2]-1].product_description])]);
+      setSpotlightItems([new Item(products[res.recommendations[0]-1].product_name, parseFloat(products[res.recommendations[0]-1].product_price), parseFloat(products[res.recommendations[0]-1].product_price), "/frontend/images/"+products[res.recommendations[0]-1].product_image, true, [products[res.recommendations[0]-1].product_description]), 
+                         new Item(products[res.recommendations[1]-1].product_name, parseFloat(products[res.recommendations[1]-1].product_price), parseFloat(products[res.recommendations[1]-1].product_price), "/frontend/images/"+products[res.recommendations[0]-1].product_image, true, [products[res.recommendations[1]-1].product_description]),
+                         new Item(products[res.recommendations[2]-1].product_name, parseFloat(products[res.recommendations[2]-1].product_price), parseFloat(products[res.recommendations[2]-1].product_price), "/frontend/images/"+products[res.recommendations[0]-1].product_image, true, [products[res.recommendations[2]-1].product_description])]);
     });
 
   }, [values.id, products.length]);
