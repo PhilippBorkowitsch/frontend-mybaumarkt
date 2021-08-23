@@ -186,7 +186,7 @@ function App() {
       
     });
 
-    fetch(`http://backend-deployment-svc:8080/availability?productId=${values.id}`, {
+    fetch(`http://aims.ctc.ezmeral.de/backend/availability?productId=${values.id}`, {
       method: 'GET',
     })
     .then((res) => res.json())
@@ -200,7 +200,7 @@ function App() {
       console.log(err);
     });
 
-    fetch(`http://backend-deployment-svc:8080/recommendation?productId=${values.id}`, {
+    fetch(`http://aims.ctc.ezmeral.de/backend/recommendation?productId=${values.id}`, {
       method: 'GET',
     })
     .then((res) => res.json())
