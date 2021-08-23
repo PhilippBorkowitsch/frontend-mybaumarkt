@@ -189,11 +189,11 @@ function App() {
     fetch(`https://aims.ctc.ezmeral.de/backend/availability?productId=${values.id}`, {
       method: 'GET',
     })
+    .then((res) => res.json())
     .then((res) => {
       console.log(res.body);
-      const availability = JSON.parse(res.body);
       var tempItem = mainItem;
-      tempItem.inStock = availability==="false"?false:true;
+      tempItem.inStock = res.body.available==="false"?false:true;
       setMainItem(tempItem);
     })
     .catch((err) => {
@@ -203,12 +203,13 @@ function App() {
     fetch(`https://aims.ctc.ezmeral.de/backend/recommendation?productId=${values.id}`, {
       method: 'GET',
     })
+    .then((res) => res.json())
     .then((res) => {
       console.log(res.body);
-      const recommendations = JSON.parse(res.body);
-      setSpotlightItems([new Item(products[recommendations[0]-1].product_name, parseFloat(products[recommendations[0]-1].product_price), parseFloat(products[recommendations[0]-1].product_price), "/frontend/images/"+products[recommendations[0]-1].product_image, true, [products[recommendations[0]-1].product_description]), 
-                         new Item(products[recommendations[1]-1].product_name, parseFloat(products[recommendations[1]-1].product_price), parseFloat(products[recommendations[1]-1].product_price), "/frontend/images/"+products[recommendations[0]-1].product_image, true, [products[recommendations[1]-1].product_description]),
-                         new Item(products[recommendations[2]-1].product_name, parseFloat(products[recommendations[2]-1].product_price), parseFloat(products[recommendations[2]-1].product_price), "/frontend/images/"+products[recommendations[0]-1].product_image, true, [products[recommendations[2]-1].product_description])]);
+
+      setSpotlightItems([new Item(products[res.body.recommendations[0]-1].product_name, parseFloat(products[res.body.recommendations[0]-1].product_price), parseFloat(products[res.body.recommendations[0]-1].product_price), "/frontend/images/"+products[res.body.recommendations[0]-1].product_image, true, [products[res.body.recommendations[0]-1].product_description]), 
+                         new Item(products[res.body.recommendations[1]-1].product_name, parseFloat(products[res.body.recommendations[1]-1].product_price), parseFloat(products[res.body.recommendations[1]-1].product_price), "/frontend/images/"+products[res.body.recommendations[0]-1].product_image, true, [products[res.body.recommendations[1]-1].product_description]),
+                         new Item(products[res.body.recommendations[2]-1].product_name, parseFloat(products[res.body.recommendations[2]-1].product_price), parseFloat(products[res.body.recommendations[2]-1].product_price), "/frontend/images/"+products[res.body.recommendations[0]-1].product_image, true, [products[res.body.recommendations[2]-1].product_description])]);
     });
 
   }, [values.id, products.length]);
