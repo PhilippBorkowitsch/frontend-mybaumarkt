@@ -155,11 +155,11 @@ function App() {
 
   const [products, setProducts] = useState([{product_id: 0, product_name: 'test', product_price: 1, product_season: '', product_description: '', product_image: 'hammer.jpg'}]);
 
-  const [mainItem, setMainItem] = useState(new Item(products[0].product_name, products[0].product_price, products[0].product_price, "./images/"+products[0].product_image, true, [products[0].product_description]));
+  const [mainItem, setMainItem] = useState(new Item(products[0].product_name, products[0].product_price, products[0].product_price, "/frontend/images/"+products[0].product_image, true, [products[0].product_description]));
   const [spotlightItems, setSpotlightItems] = useState([
-    new Item(products[0].product_name, products[0].product_price, products[0].product_price, "./images/"+products[0].product_image, true, [products[0].product_description]), 
-    new Item(products[0].product_name, products[0].product_price, products[0].product_price, "./images/"+products[0].product_image, true, [products[0].product_description]), 
-    new Item(products[0].product_name, products[0].product_price, products[0].product_price, "./images/"+products[0].product_image, true, [products[0].product_description])
+    new Item(products[0].product_name, products[0].product_price, products[0].product_price, "/frontend/images/"+products[0].product_image, true, [products[0].product_description]), 
+    new Item(products[0].product_name, products[0].product_price, products[0].product_price, "/frontend/images/"+products[0].product_image, true, [products[0].product_description]), 
+    new Item(products[0].product_name, products[0].product_price, products[0].product_price, "/frontend/images/"+products[0].product_image, true, [products[0].product_description])
   ]);
 
   const addCoupon = (item) => {
@@ -182,36 +182,41 @@ function App() {
       console.log("text " + products[0]);
       console.log(products.length);
       if(products.length > values.id-1){
-        setMainItem(new Item(products[values.id-1].product_name, parseFloat(products[values.id-1].product_price), parseFloat(products[values.id-1].product_price), "./images/"+products[values.id-1].product_image, true, [products[values.id-1].product_description]));
+        setMainItem(new Item(products[values.id-1].product_name, parseFloat(products[values.id-1].product_price), parseFloat(products[values.id-1].product_price), "/frontend/images/"+products[values.id-1].product_image, true, [products[values.id-1].product_description]));
       }
       
     });
 
     fetch({
-      url: `https://ezmeral52gateway1.demo.local:10065/availability?productId=${values.id}`,
+      url: `https://aims.ctc.ezmeral.de/backend/availability?productId=${values.id}`,
       method: 'GET',
       headers: {
         
       }
     })
-    // .then((res) => res.json())
-    .then((res) => console.log(res))
+     .then((res) => res.json())
+    .then((res) => {
+      console.log(res);
+      var tempItem = mainItem;
+      tempItem.inStock = res.body;
+      setMainItem(tempItem);
+    })
     .catch((err) => {
       console.log(err);
     });
 
-    /*fetch({
-      url: `https://ezmeral52gateway1.demo.local:10065/recommendation?productId=${values.id}`,
+    fetch({
+      url: `https://aims.ctc.ezmeral.de/backend/recommendation?productId=${values.id}`,
       method: 'GET',
       headers: {}
     })
     .then((res) => res.json())
     .then((res) => {
       console.log(res.body.recommendations);
-      setSpotlightItems([new Item(products[res.body.recommendations[0]-1].product_name, parseFloat(products[res.body.recommendations[0]-1].product_price), parseFloat(products[res.body.recommendations[0]-1].product_price), "./images/"+products[res.body.recommendations[0]-1].product_image, true, [products[res.body.recommendations[0]-1].product_description]), 
-                         new Item(products[res.body.recommendations[1]-1].product_name, parseFloat(products[res.body.recommendations[1]-1].product_price), parseFloat(products[res.body.recommendations[1]-1].product_price), "./images/"+products[res.body.recommendations[0]-1].product_image, true, [products[res.body.recommendations[1]-1].product_description]),
-                         new Item(products[res.body.recommendations[2]-1].product_name, parseFloat(products[res.body.recommendations[2]-1].product_price), parseFloat(products[res.body.recommendations[2]-1].product_price), "./images/"+products[res.body.recommendations[0]-1].product_image, true, [products[res.body.recommendations[2]-1].product_description])]);
-    });*/
+      setSpotlightItems([new Item(products[res.body.recommendations[0]-1].product_name, parseFloat(products[res.body.recommendations[0]-1].product_price), parseFloat(products[res.body.recommendations[0]-1].product_price), "/frontend/images/"+products[res.body.recommendations[0]-1].product_image, true, [products[res.body.recommendations[0]-1].product_description]), 
+                         new Item(products[res.body.recommendations[1]-1].product_name, parseFloat(products[res.body.recommendations[1]-1].product_price), parseFloat(products[res.body.recommendations[1]-1].product_price), "/frontend/images/"+products[res.body.recommendations[0]-1].product_image, true, [products[res.body.recommendations[1]-1].product_description]),
+                         new Item(products[res.body.recommendations[2]-1].product_name, parseFloat(products[res.body.recommendations[2]-1].product_price), parseFloat(products[res.body.recommendations[2]-1].product_price), "/frontend/images/"+products[res.body.recommendations[0]-1].product_image, true, [products[res.body.recommendations[2]-1].product_description])]);
+    });
 
   }, [values.id, products.length]);
 
