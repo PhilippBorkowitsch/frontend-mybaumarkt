@@ -186,14 +186,10 @@ function App() {
       
     });
 
-    fetch({
-      url: `https://aims.ctc.ezmeral.de/backend/availability?productId=${values.id}`,
+    fetch(`http://backend-deployment-svc:8080/availability?productId=${values.id}`, {
       method: 'GET',
-      headers: {
-        
-      }
     })
-     .then((res) => res.json())
+    .then((res) => res.json())
     .then((res) => {
       console.log(res);
       var tempItem = mainItem;
@@ -204,10 +200,8 @@ function App() {
       console.log(err);
     });
 
-    fetch({
-      url: `https://aims.ctc.ezmeral.de/backend/recommendation?productId=${values.id}`,
+    fetch(`http://backend-deployment-svc:8080/recommendation?productId=${values.id}`, {
       method: 'GET',
-      headers: {}
     })
     .then((res) => res.json())
     .then((res) => {
