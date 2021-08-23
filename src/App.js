@@ -193,7 +193,7 @@ function App() {
     .then((res) => {
       console.log(res.body);
       var tempItem = mainItem;
-      tempItem.inStock = res.body.available==="false"?false:true;
+      tempItem.inStock = res.body.available=="false"?false:true;
       setMainItem(tempItem);
     })
     .catch((err) => {
