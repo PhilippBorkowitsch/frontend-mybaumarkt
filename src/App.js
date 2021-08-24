@@ -206,10 +206,11 @@ function App() {
     .then((res) => res.json())
     .then((res) => {
       console.log(res);
-
+      if(products.length > 1){
       setSpotlightItems([new Item(products[res.recommendations[0]-1].product_name, parseFloat(products[res.recommendations[0]-1].product_price), parseFloat(products[res.recommendations[0]-1].product_price), "/frontend/images/"+products[res.recommendations[0]-1].product_image, true, [products[res.recommendations[0]-1].product_description]), 
                          new Item(products[res.recommendations[1]-1].product_name, parseFloat(products[res.recommendations[1]-1].product_price), parseFloat(products[res.recommendations[1]-1].product_price), "/frontend/images/"+products[res.recommendations[0]-1].product_image, true, [products[res.recommendations[1]-1].product_description]),
                          new Item(products[res.recommendations[2]-1].product_name, parseFloat(products[res.recommendations[2]-1].product_price), parseFloat(products[res.recommendations[2]-1].product_price), "/frontend/images/"+products[res.recommendations[0]-1].product_image, true, [products[res.recommendations[2]-1].product_description])]);
+      }
     });
 
   }, [values.id, products.length]);
