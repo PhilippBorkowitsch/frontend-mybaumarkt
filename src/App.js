@@ -176,16 +176,6 @@ function App() {
   values.id = parseInt(values.id);
 
   useEffect(() => {
-    d3.csv(pdata, function(data) {
-      setProducts(data);
-      console.log("text " + products[0]);
-      console.log(products.length);
-      if(products.length > values.id-1){
-        setMainItem(new Item(products[values.id-1].product_name, parseFloat(products[values.id-1].product_price), parseFloat(products[values.id-1].product_price), "/frontend/images/"+products[values.id-1].product_image, true, [products[values.id-1].product_description]));
-      }
-      
-    });
-
     fetch(`https://aims.ctc.ezmeral.de/backend/availability?productId=${values.id}`, {
       method: 'GET',
     })
