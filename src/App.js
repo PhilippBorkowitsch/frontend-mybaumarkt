@@ -78,10 +78,10 @@ const OfferCard = (props) => {
           <TableBody>
             <TableRow>
               <TableCell scope="row">
-              <s>{props.offerItem.price.toFixed(2)} €</s>
+              <s>{props.offerItem?.price.toFixed(2)} €</s>
               </TableCell>
               <TableCell>
-                <span style={{color: '#FF0000'}}>{(props.offerItem.price * 0.8).toFixed(2)} €</span>
+                <span style={{color: '#FF0000'}}>{(props.offerItem?.price * 0.8).toFixed(2)} €</span>
               </TableCell>
             </TableRow>
           </TableBody>
@@ -112,7 +112,7 @@ const OfferTable = (props) => {
         Früher:
       </TableCell>
       <TableCell>
-        <span><s>{props.item.price.toFixed(2)} €</s></span>
+        <span><s>{props.item?.price.toFixed(2)} €</s></span>
       </TableCell>
     </TableRow>
     <TableRow>
@@ -120,13 +120,13 @@ const OfferTable = (props) => {
         Unser Preis:
       </TableCell>
       <TableCell>
-        <span style={{color: '#FF0000'}}>{props.item.offerPrice.toFixed(2)} €</span>
+        <span style={{color: '#FF0000'}}>{props.item?.offerPrice.toFixed(2)} €</span>
       </TableCell>
     </TableRow><TableRow>
       <TableCell scope="row">
       </TableCell>
       <TableCell>
-        {(1 - props.item.offerPrice/props.item.price).toFixed(2) * 100}% gespart!
+        {(1 - props.item?(props.item.offerPrice/props.item.price):1).toFixed(2) * 100}% gespart!
       </TableCell>
     </TableRow>
   </TableBody>)
@@ -140,7 +140,7 @@ const NoOfferTable = (props) => {
           Preis:
         </TableCell>
         <TableCell>
-          <span>{props.item.price.toFixed(2)} €</span>
+          <span>{props.item?.price.toFixed(2)} €</span>
         </TableCell>
       </TableRow>
     </TableBody>
@@ -150,16 +150,12 @@ const NoOfferTable = (props) => {
 function App() {
   const [showSidebar, setShowSidebar] = useState(false);
 
-  const [barcodes, setBarcodes] = useState(['Nagel 20 %']);
+  const [barcodes, setBarcodes] = useState([]);
 
-  const [products, setProducts] = useState([{product_id: 0, product_name: 'test', product_price: 1, product_season: '', product_description: '', product_image: 'hammer.jpg'}]);
+  const [products, setProducts] = useState([]);
 
-  const [mainItem, setMainItem] = useState(new Item(products[0].product_name, products[0].product_price, products[0].product_price, "/frontend/images/"+products[0].product_image, true, [products[0].product_description]));
-  const [spotlightItems, setSpotlightItems] = useState([
-    new Item(products[0].product_name, products[0].product_price, products[0].product_price, "/frontend/images/"+products[0].product_image, true, [products[0].product_description]), 
-    new Item(products[0].product_name, products[0].product_price, products[0].product_price, "/frontend/images/"+products[0].product_image, true, [products[0].product_description]), 
-    new Item(products[0].product_name, products[0].product_price, products[0].product_price, "/frontend/images/"+products[0].product_image, true, [products[0].product_description])
-  ]);
+  const [mainItem, setMainItem] = useState();
+  const [spotlightItems, setSpotlightItems] = useState([]);
 
   const addCoupon = (item) => {
     let newBarcodes = barcodes;
@@ -176,6 +172,14 @@ function App() {
   values.id = parseInt(values.id);
 
   useEffect(() => {
+    d3.csv(pdata, function(data) {
+      setProducts(data);
+      console.log("text " + products[0]);
+      console.log(products.length);
+      if(products.length > values.id-1){
+        setMainItem(new Item(products[values.id-1].product_name, parseFloat(products[values.id-1].product_price), parseFloat(products[values.id-1].product_price), "/frontend/images/"+products[values.id-1].product_image, true, [products[values.id-1].product_description]));
+      }
+    });
     fetch(`https://aims.ctc.ezmeral.de/backend/availability?productId=${values.id}`, {
       method: 'GET',
     })
@@ -236,14 +240,14 @@ function App() {
                     ]}
                   >
                     <Box flex gridArea='title' background='light-2'>
-                      <Heading level='1' alignSelf='center' margin='auto'>{mainItem.name}</Heading>
+                      <Heading level='1' alignSelf='center' margin='auto'>{mainItem?.name}</Heading>
                     </Box>
                     <Box flex gridArea='picture'>
-                      <Image fit='contain' src={mainItem.image}/>
+                      <Image fit='contain' src={mainItem?.image}/>
                     </Box>
                     <Box flex gridArea='info' pad='large' background='light-2'>
                       <Table>
-                        {mainItem.offerPrice !== undefined?
+                        {mainItem?.offerPrice !== undefined?
                           <OfferTable item={mainItem}/>:
                           <NoOfferTable item={mainItem}/>
                         }
@@ -251,9 +255,9 @@ function App() {
                       {/*<ul>
                         {mainItem.description.map((desc) => <li><Text size='18px'>{desc}</Text></li>)}
                       </ul>*/}
-                      <p>{mainItem.description}</p>
+                      <p>{mainItem?.description}</p>
                       <Box flex style={{justifyContent:'flex-end'}}>
-                          {mainItem.inStock? 
+                          {mainItem?.inStock? 
                           <Button primary alignSelf='end' fill='horizontal' label="Online"/>:(
                           <Box>
                             <Text alignSelf='center' style={{padding: '10px'}}>Nicht mehr vorrätig? Bestellen Sie online!</Text>
@@ -276,7 +280,7 @@ function App() {
                           { name: '3item', start: [2, 1], end: [2, 1] },
                         ]}
                       >
-                        <Heading level='2' gridArea='saveHereText' margin='auto' style={{padding: '10px'}}>Beim Kauf von '{mainItem.name}' erhalten Sie Rabatte auf:</Heading>
+                        <Heading level='2' gridArea='saveHereText' margin='auto' style={{padding: '10px'}}>Beim Kauf von '{mainItem?.name}' erhalten Sie Rabatte auf:</Heading>
                         {spotlightItems.map((item, index) => {
                           return (
                             <OfferCard 
